@@ -35,6 +35,23 @@ is.variable = function(call) {
   is.name(call)
 }
 
+examples.find.variables = function() {
+  find.variables(quote({x = y^2-z+max(a,5)}))
+}
+
+#' Find all variables from a call or expression object
+#' 
+#' @return unique variables names as character vector
+find.variables = function(call) {
+  if (is.name(call)) return(as.character(call))
+  if (length(call)<=1) return(NULL)  
+  names = lapply(call[-1], function(e1) {
+    find.variables(e1)
+  })
+  names = unique(unlist(names, use.names=FALSE))
+  names
+}
+
 
 #' get lhs of an assignment
 get.lhs = function(call) {
