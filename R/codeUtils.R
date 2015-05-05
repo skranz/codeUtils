@@ -108,3 +108,32 @@ substitute.call <- function (x, env)
   call <- substitute(substitute(x, env), list(x = x))
   eval(call)
 }
+
+examples.subst.var = function() {
+  call = "x+y==f(x)"
+  substitute.var(call, "x","(x+3)")
+  
+}
+
+parse.as.call = function(text) {
+  parse(text=text)[[1]]
+}
+
+#' Substitute a variable or a symbol in the expression by subs
+#' @param call a call object or string
+#' @param var a symbol or string
+#' @param subs a call or string
+#' @export
+subst.var <- function(call, var, subs, subset=TRUE) {
+  restore.point("substitute.variable")
+  if (!is.character(var)) var = deparse(var)
+  if (is.character(call)) call = parse(text=call)[[1]]
+  if (is.character(subs)) subs = parse(text=subs)[[1]]
+  
+  sub.li = list(subs)
+  names(sub.li) = var
+  
+  res = substitute.call(call, sub.li)
+  if (subset) res = res[[1]]
+  res
+}
