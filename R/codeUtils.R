@@ -42,11 +42,12 @@ examples.find.variables = function() {
 #' Find all variables from a call or expression object
 #' 
 #' @return unique variables names as character vector
-find.variables = function(call) {
+find.variables = function(call, max.level=Inf, level=1) {
+  if (level > max.level) return(NULL)  
   if (is.name(call)) return(as.character(call))
   if (length(call)<=1) return(NULL)  
   names = lapply(call[-1], function(e1) {
-    find.variables(e1)
+    find.variables(e1, max.level=max.level, level=level+1)
   })
   names = unique(unlist(names, use.names=FALSE))
   names
@@ -61,6 +62,7 @@ examples.find.funs = function() {
     5*3
   })
   find.funs(call)
+  find.funs(call, max.level=2)
   find.variables(call)
 }
 
@@ -74,11 +76,12 @@ find.global.vars = function(fun) {
 #' Find all function calls from a call or expression object
 #' 
 #' @return unique names of called functions as character vector
-find.funs = function(call) {
+find.funs = function(call, max.level=Inf, level=1) {
+  if (level > max.level) return(NULL)
   if (!is.call(call)) return(NULL)
   fun.name = as.character(call[1])
   sub.names = lapply(call[-1], function(e1) {
-    find.funs(e1)
+    find.funs(e1, max.level=max.level, level=level+1)
   })
   names = unique(c(fun.name,unlist(sub.names, use.names=FALSE)))
   names
