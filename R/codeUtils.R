@@ -52,6 +52,37 @@ find.variables = function(call) {
   names
 }
 
+examples.find.funs = function() {
+ 
+  call = quote({
+    mutate(group_by(x,type), Q=sum(q))
+    .Globalenv
+    print("y")
+    5*3
+  })
+  find.funs(call)
+  find.variables(call)
+}
+
+#' Find all globale variables in a function
+#' 
+#' just a wrapper to codetools::findGlobals
+find.global.vars = function(fun) {
+  codetools::findGlobals(fun,merge=FALSE)$variables
+}
+
+#' Find all function calls from a call or expression object
+#' 
+#' @return unique names of called functions as character vector
+find.funs = function(call) {
+  if (!is.call(call)) return(NULL)
+  fun.name = as.character(call[1])
+  sub.names = lapply(call[-1], function(e1) {
+    find.funs(e1)
+  })
+  names = unique(c(fun.name,unlist(sub.names, use.names=FALSE)))
+  names
+}
 
 #' get lhs of an assignment
 get.lhs = function(call) {
