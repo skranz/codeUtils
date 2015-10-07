@@ -36,20 +36,56 @@ is.variable = function(call) {
 }
 
 examples.find.variables = function() {
-  find.variables(quote({x = y^2-z+max(a,5)}))
+  find.variables(quote({x = y^2-z+2*x+max(a,5)}))
+  find.multiple.variables(quote({x = y^2-z+2*x+max(a,5)}))
+  count.variables(quote({x = y^2-z+2*x+max(a,5)}))
+  call.size(quote(log(1+1)+x))  
+}
+
+#' Find the number of functions and variables (counting multiplies) in a call
+#' 
+#' @param call the call whose size shall be determined
+#' @return an integer of this size
+call.size = function(call) {
+  if (length(call)==1L) return(1L)
+  sum(sapply(call[-1],call.size)) +1
+  
 }
 
 #' Find all variables from a call or expression object
 #' 
 #' @return unique variables names as character vector
-find.variables = function(call, max.level=Inf, level=1) {
-  if (level > max.level) return(NULL)  
+find.variables = function(call) {
   if (is.name(call)) return(as.character(call))
   if (length(call)<=1) return(NULL)  
   names = lapply(call[-1], function(e1) {
-    find.variables(e1, max.level=max.level, level=level+1)
+    find.variables(e1)
   })
   names = unique(unlist(names, use.names=FALSE))
+  names
+}
+
+#' Count all variables appeareances of each variable in a call or expression object
+#' 
+#' @param a call object
+#' @return table that counts variable names
+count.variables = function(call) {
+  vars = find.multiple.variables(call)
+  table(vars)
+}
+
+#' Find all variables from a call or expression object. 
+#' If a variable appears n times, it is returned n times
+#' 
+#' @param a call object
+#' @return variables names (possibly duplicated) as character vector
+find.multiple.variables = function(call) {
+  if (is.name(call)) return(as.character(call))
+  if (length(call)<=1) return(NULL)  
+  names = lapply(call[-1], function(e1) {
+    find.multiple.variables(e1)
+  })
+  names = unlist(names, use.names=FALSE)
   names
 }
 
@@ -149,7 +185,11 @@ examples.subst.var = function() {
   
 }
 
-parse.as.call = function(text) {
+parse.as.call = function(text, allow.null=TRUE) {
+  if (is.null(text)) {
+    if (allow.null) return(NULL)
+    stop("parse.as.call was called with text=NULL")
+  }
   parse(text=text)[[1]]
 }
 

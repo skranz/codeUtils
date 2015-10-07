@@ -4,7 +4,7 @@
 \alias{find.funs}
 \title{Find all function calls from a call or expression object}
 \usage{
-find.funs(call)
+find.funs(call, max.level = Inf, level = 1)
 }
 \value{
 unique names of called functions as character vector
