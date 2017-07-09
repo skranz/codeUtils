@@ -1,10 +1,13 @@
 Package: codeUtils
 Type: Package
-Title: Helper functions for parsing and classifying R code. Useful for domain specific languages.
+Title: Helper functions for parsing and classifying R code. Useful for domain
+    specific languages.
 Version: 0.1
 Date: 2014-12-03
 Author: Sebastian Kranz
 Maintainer: Sebastian Kranz <sebastian.kranz@uni-ulm.de>
 Description: Very preliminary. May completely change
 License: GPL >= 2.0
-Depends: restorepoint
+Depends:
+    restorepoint
+RoxygenNote: 5.0.0

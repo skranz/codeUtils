@@ -1,3 +1,18 @@
+examples.strip.braces = function() {
+  call = quote((x==5))
+  strip.parentheses(quote(((x==5))))
+}
+
+#' strip a call object from outer parentheses
+strip.parentheses = function(call, parentheses="(") {
+  if (length(call)==1) return(call)
+  char.op = as.character(call[[1]])
+  if (char.op %in% parentheses) {
+    return(strip.parentheses(call[[2]]))
+  }
+  call
+}
+
 #' check if a call is an assignment
 is.assignment = function(call) {
   if (length(call)==1)
